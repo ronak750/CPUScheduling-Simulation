@@ -21,38 +21,41 @@ interface Algos {
 }
 class FCFS extends Thread implements Algos
 {
-    ReadyQue readyQue;
+    ReadyQue processQue;
     
-    FCFS(ReadyQue rq)
+    FCFS(ReadyQue pq)
     {
-        this.readyQue=rq;
+        this.processQue=pq;
     }
     
     public void run()
     {
         int timer=0;
-        Collections.sort(readyQue,new SortByArrivalTime());
-        int pointer=0;
+        Collections.sort(processQue,new SortByArrivalTime());
+        //int pointer=0;
 
-        for(;pointer<readyQue.size();)
+        for(int pointer=0;pointer<processQue.size();)
         {
-            Process p=readyQue.get(pointer);
+            Process p=processQue.get(pointer);  
+             System.out.println(p.processId+" "+timer);
             if(timer>=p.arrivalTime)
-            {    while(!p.isCompleted)
+            {   
+                p.start.add(timer);
+                while(!p.isCompleted)
                 {
-
+                    //System.out.println(p.processId+" "+timer);
+                    //p.start.add(timer);
                     p.remainingTime--;
                     p.servedTime++;
                     timer++;
-                    //System.out.println(timer);
+                    //p.end.add(timer);
                     if(p.remainingTime==0)
                         p.complete(timer);
-                        try {
-                            Thread.sleep(scale);
-                        } catch (InterruptedException ex) {
-                           
-                        }
+                    try {
+                        Thread.sleep(scale);
+                    } catch (InterruptedException ex) {}                        
                 }
+                p.end.add(timer);
                 pointer++;
             }
             else{
@@ -92,6 +95,7 @@ class SJF extends Thread implements Algos{
             {
                 Process p=readyQue.get(0);
                 readyQue.remove(0);
+                p.start.add(timer);
                 while(!p.isCompleted)
                 {
                     p.remainingTime--;
@@ -102,7 +106,8 @@ class SJF extends Thread implements Algos{
                     try {
                         Thread.sleep(scale);
                     } catch (InterruptedException ex) {System.out.println(ex); }
-                }   
+                } 
+                p.end.add(timer);
                 count++;
             }
             else {
@@ -162,7 +167,8 @@ class Priority extends Thread implements Algos{
             if(!readyQue.isEmpty())
             {
                 Process p=readyQue.get(0);
-                //readyQue.remove(0);                              
+                //readyQue.remove(0);
+                p.start.add(timer);
                 p.remainingTime--;
                 p.servedTime++;
                 timer++;
@@ -172,6 +178,7 @@ class Priority extends Thread implements Algos{
                     count++;
                     readyQue.remove(p);  
                 }
+                p.end.add(timer);
                 try {
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) {System.out.println(ex); }
@@ -234,7 +241,8 @@ class SRTF extends Thread implements Algos{
             if(!readyQue.isEmpty())
             {
                 Process p=readyQue.get(0);
-                //readyQue.remove(0);                              
+                //readyQue.remove(0); 
+                p.start.add(timer);
                 p.remainingTime--;
                 p.servedTime++;
                 timer++;
@@ -247,7 +255,7 @@ class SRTF extends Thread implements Algos{
                 try {
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) {System.out.println(ex); }
-                   
+                p.end.add(timer);
                 //count++;
             }
             else {
@@ -309,6 +317,7 @@ class RR extends Thread implements Algos{
                 //readyQue.remove(0);   
                 Process p=readyQue.get(pointer);
                 int timeSlice=0;
+                p.start.add(timer);
                 while(timeSlice<timeQuantam && p.isCompleted==false){
                 p.remainingTime--;
                 p.servedTime++;
@@ -324,6 +333,7 @@ class RR extends Thread implements Algos{
                 } catch (InterruptedException ex) {System.out.println(ex); }
                 timeSlice++;
                 } 
+                p.end.add(timer);
                 } 
                 //count++;
             }
