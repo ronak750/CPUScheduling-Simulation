@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 interface Algos {
 
    public int scale=500;
+   int timeQuantam=4;
    
     
 }
@@ -110,7 +111,7 @@ class SJF extends Thread implements Algos{
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) { System.out.println(ex); }         
             }
-        }      
+        }xy.interrupt();      
     }  
     
     class XYZ extends Thread{
@@ -183,7 +184,7 @@ class Priority extends Thread implements Algos{
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) { System.out.println(ex); }         
             }
-        }      
+        }ab.interrupt();      
     }  
     
     class ABC extends Thread{
@@ -214,7 +215,7 @@ class Priority extends Thread implements Algos{
 
 class SRTF extends Thread implements Algos{
     
-        ReadyQue processQue;
+    ReadyQue processQue;
     int timer=0;
     ReadyQue readyQue=new ReadyQue();
     ABC ab=new ABC();
@@ -255,7 +256,7 @@ class SRTF extends Thread implements Algos{
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) { System.out.println(ex); }         
             }
-        }      
+        }ab.interrupt();      
     }  
     
     class ABC extends Thread{
@@ -284,3 +285,84 @@ class SRTF extends Thread implements Algos{
 }
 
 
+class RR extends Thread implements Algos{
+    ReadyQue processQue;
+    int timer=0;
+    ReadyQue readyQue=new ReadyQue();
+    ABC ab=new ABC();
+    RR(ReadyQue pq)
+    {
+        processQue=pq;
+        Collections.sort(processQue,new SortByArrivalTime());
+        ab.start();
+    }
+    
+    public void run()
+    {
+        int count=0;
+        for(;count<processQue.size();)
+        {
+            if(!readyQue.isEmpty())
+            {
+                //Process p=readyQue.get(0);
+                for(int pointer=0;pointer<readyQue.size();pointer++){
+                //readyQue.remove(0);   
+                Process p=readyQue.get(pointer);
+                int timeSlice=0;
+                while(timeSlice<timeQuantam && p.isCompleted==false){
+                p.remainingTime--;
+                p.servedTime++;
+                timer++;
+                if(p.remainingTime==0)
+                {
+                    p.complete(timer);
+                    count++;
+                    readyQue.remove(p);  
+                }
+                try {
+                    Thread.sleep(scale);
+                } catch (InterruptedException ex) {System.out.println(ex); }
+                timeSlice++;
+                } 
+                } 
+                //count++;
+            }
+            else {
+                timer++;
+                try {
+                    Thread.sleep(scale);
+                } catch (InterruptedException ex) { System.out.println(ex); }         
+            }
+                   
+        } 
+           ab.interrupt();
+    }
+    
+    
+    class ABC extends Thread{
+        
+        public void run()
+        {
+            int pointer=0;
+            for(;pointer<processQue.size();)
+            //for(Process p: processQue)
+            {     
+                Process p=processQue.get(pointer);
+                if(timer>=p.arrivalTime)
+                {
+                    readyQue.add(p);
+                    pointer++;
+                }
+                else {
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException ex) {}                        
+                }
+            }
+        }
+    }
+    
+    
+   
+    
+}
