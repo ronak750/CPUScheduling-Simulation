@@ -17,12 +17,13 @@ import org.jfree.ui.RefineryUtilities;
  *
  * @author Apar
  */
-public class Simulation extends javax.swing.JFrame {
+public class Simulation extends javax.swing.JFrame{
 
     /**
      * Creates new form Simulation
      */
     
+    static boolean exit=false;
     static ReadyQue processQue;
     ArrayList<Process> backup;
     int noOfProcesses=0;
@@ -288,9 +289,9 @@ public class Simulation extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(71, 71, 71)
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(26, 26, 26)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +322,7 @@ public class Simulation extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(99, 99, 99)
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 673, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -344,7 +345,7 @@ public class Simulation extends javax.swing.JFrame {
                 .addGroup(layout.createSequentialGroup()
                     .addGap(34, 34, 34)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(1007, Short.MAX_VALUE)))
+                    .addContainerGap(1028, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -415,7 +416,7 @@ public class Simulation extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pgrBar8, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(168, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(99, 99, 99)
@@ -443,7 +444,15 @@ public class Simulation extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        //copy();
+        copy();
+        exit=true;
+        try {
+            Thread.sleep(400);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Simulation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        exit=false;
         Thread t=null;
         int index=algoList.getSelectedIndex();
         switch(index)
@@ -465,7 +474,7 @@ public class Simulation extends javax.swing.JFrame {
                     break;
         } 
         t.start();
-        
+
         try {
             //gt.cre
             Thread.sleep(500);
@@ -475,7 +484,7 @@ public class Simulation extends javax.swing.JFrame {
         Progress pgr=new Progress();
         pgr.start();
         
-        
+
         
         
         
@@ -504,7 +513,7 @@ jButton1.setEnabled(false);
          
          p.add(noOfProcesses, at, cpu, prt);
          mp.get(noOfProcesses).setMaximum(cpu);
-         processQue.add(p);
+         //processQue.add(p);
          model.addRow(new Object [] {noOfProcesses,at,cpu,prt} );
          backup.add(p);
         
@@ -564,10 +573,11 @@ if(evt.getKeyCode()==KeyEvent.VK_ENTER)
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 try{
-            Gantt demo=new Gantt("Scheduling",processQue);
+            Gantt demo=new Gantt(algoList.getSelectedItem().toString(),processQue);
                     demo.pack();
         RefineryUtilities.centerFrameOnScreen(demo);
         demo.setVisible(true);
+        //demo.setDefaultCloseOperation(2);
         }catch(Exception e){System.out.println(e);}
         for(Process p: processQue)
         {
@@ -608,6 +618,7 @@ try{
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Simulation().setVisible(true);
+//                new Simulation().setD
             }
         });
     }
@@ -619,14 +630,28 @@ try{
         model.setValueAt(p.wt, p.processId-1, 6);
     }
     
-//    void copy()
-//    {
-//        processQue.removeAll(processQue);
-//        for(Process p: backup)
-//        {
-//            processQue.add(p);
-//        }
-//    }
+    void copy()
+    {
+        processQue.removeAll(processQue);
+        for(Process p: backup)
+        {
+            Process pnew=new Process();
+            pnew.add(p.processId,p.arrivalTime,p.cpuBrust,p.priority);
+            processQue.add(pnew);
+        }
+        
+        for(int i=1;i<=mp.size();i++)
+        {
+            mp.get(i).setValue(0);
+        }
+        for(int i=0;i<model.getRowCount();i++)
+        {
+            model.setValueAt(null, i, 4);
+            model.setValueAt(null, i, 5);
+            model.setValueAt(null, i, 6);
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> algoList;
@@ -665,11 +690,13 @@ try{
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
+    
 class Progress extends Thread{
     public void run()
     {
         while(true)
         {
+            try{
             for(Process p:processQue)
             {
                 mp.get(p.processId).setValue(p.servedTime);
@@ -678,11 +705,16 @@ class Progress extends Thread{
                     updateTable(p);
                 }
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     } catch (InterruptedException ex) {
                         
                     }
-            }          
+            }
+            }catch(Exception e){
+                //System.out.println(e);
+            }
+            if(exit)
+                break;
         }
         
     }

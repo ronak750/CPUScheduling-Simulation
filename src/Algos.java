@@ -22,7 +22,6 @@ interface Algos {
 class FCFS extends Thread implements Algos
 {
     ReadyQue processQue;
-    
     FCFS(ReadyQue pq)
     {
         this.processQue=pq;
@@ -67,7 +66,7 @@ class FCFS extends Thread implements Algos
                 timer++;
 
             }
-        }        
+        } 
     }
     
 }
@@ -116,7 +115,7 @@ class SJF extends Thread implements Algos{
                     Thread.sleep(scale);
                 } catch (InterruptedException ex) { System.out.println(ex); }         
             }
-        }xy.interrupt();      
+        }xy.interrupt();   
     }  
     
     class XYZ extends Thread{
