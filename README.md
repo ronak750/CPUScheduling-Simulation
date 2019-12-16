@@ -1,1 +1,1 @@
-# CPUScheduling-Simulation
+# Graphical CPU Scheduling-Simulation
