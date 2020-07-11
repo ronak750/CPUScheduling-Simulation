@@ -12,366 +12,276 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-interface Algos {
 
-   public int scale=500;
-   int timeQuantam=4;
+abstract class Algos extends Thread{
+     
+   private int scale=300;
+   protected int timeQuantam=3;
+   protected int timer=0;
+   protected int pointer=0;
+   protected int completedCount=0;
+   public ReadyQue processQue;
+   protected ReadyQue readyQue=new ReadyQue(); 
    
+   Algos(ReadyQue pq)
+   {
+       this.processQue=pq;
+       Collections.sort(processQue,new SortByArrivalTime());
+   }
+   
+   //methods
+    abstract void addProcess();
     
-}
-class FCFS extends Thread implements Algos
-{
-    ReadyQue processQue;
-    FCFS(ReadyQue pq)
+    void incTimer()
     {
-        this.processQue=pq;
+       timer++;
+       try {
+        Thread.sleep(scale);
+        } catch (InterruptedException ex) {
+            System.err.println(""+ex.getMessage());
+        }
     }
+}
+
+class FCFS extends Algos
+{
     
+    public FCFS(ReadyQue pq)
+    {
+        super(pq);   
+    }
     public void run()
     {
-        int timer=0;
-        Collections.sort(processQue,new SortByArrivalTime());
-        //int pointer=0;
-
-        for(int pointer=0;pointer<processQue.size();)
+        timer=0;
+        while(completedCount<processQue.size())
         {
-            Process p=processQue.get(pointer);  
-             System.out.println(p.processId+" "+timer);
-            if(timer>=p.arrivalTime)
-            {   
-                p.start.add(timer);
+            addProcess();      
+            if(!readyQue.isEmpty())
+            {
+                Process p=readyQue.get(0);  
                 while(!p.isCompleted)
                 {
-                    //System.out.println(p.processId+" "+timer);
-                    //p.start.add(timer);
-                    p.remainingTime--;
-                    p.servedTime++;
-                    timer++;
-                    //p.end.add(timer);
+                    p.execute(timer);
+                    incTimer();
                     if(p.remainingTime==0)
+                    {
                         p.complete(timer);
-                    try {
-                        Thread.sleep(scale);
-                    } catch (InterruptedException ex) {}                        
-                }
-                p.end.add(timer);
+                        readyQue.remove(p);
+                        completedCount++;
+                    }       
+                }                    
+            }
+            else incTimer();         
+        }
+    }
+    void addProcess(){
+        while(pointer<processQue.size())
+        {
+            Process p=processQue.get(pointer);
+            if(timer>=p.arrivalTime)
+            {
+                readyQue.add(processQue.get(pointer));
                 pointer++;
             }
-            else{
-                try {
-                            Thread.sleep(scale);
-                        } catch (InterruptedException ex) {
-                           
-                        }
-                timer++;
-
-            }
-        } 
+            else return;
+        }
     }
-    
 }
 
 
-class SJF extends Thread implements Algos{
-    
-    ReadyQue processQue;
-    int timer=0;
-    ReadyQue readyQue=new ReadyQue();
-    XYZ xy=new XYZ();
+class SJF extends Algos
+{ 
     SJF(ReadyQue pq)
     {
-        processQue=pq;
-        Collections.sort(processQue,new SortByArrivalTime());
-        xy.start();
+        super(pq);      
     }
     
     public void run()
-    {         
-        int count=0;
-        for(;count<processQue.size();)
+    {    
+        timer=0;
+        while(completedCount<processQue.size())
         {
+            addProcess();      
             if(!readyQue.isEmpty())
             {
                 Process p=readyQue.get(0);
-                readyQue.remove(0);
-                p.start.add(timer);
                 while(!p.isCompleted)
                 {
-                    p.remainingTime--;
-                    p.servedTime++;
-                    timer++;
+                    p.execute(timer);
+                    incTimer();
                     if(p.remainingTime==0)
+                    {
                         p.complete(timer);
-                    try {
-                        Thread.sleep(scale);
-                    } catch (InterruptedException ex) {System.out.println(ex); }
-                } 
-                p.end.add(timer);
-                count++;
-            }
-            else {
-                timer++;
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) { System.out.println(ex); }         
-            }
-        }xy.interrupt();   
-    }  
-    
-    class XYZ extends Thread{
+                        readyQue.remove(p);
+                        completedCount++;
+                    }       
+                }  
+            }         
+            else incTimer();          
+        }
+    }
         
-        public void run()
+    void addProcess()
+    {
+        while(pointer<processQue.size())
         {
-            int pointer=0;
-            for(;pointer<processQue.size();)
-            //for(Process p: processQue)
-            {     
-                Process p=processQue.get(pointer);
-                if(timer>=p.arrivalTime)
-                {
-                    readyQue.addByTime(p);
-                    pointer++;
-                }
-                else {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex) {}                        
-                }
+            Process p=processQue.get(pointer);
+            if(timer>=p.arrivalTime)
+            {
+                readyQue.addByTime(processQue.get(pointer));
+                pointer++;
             }
+            else return;
         }
     }
     
-        
 }
 
+class Priority extends Algos{
 
-class Priority extends Thread implements Algos{
+    private int pointer=0;
+    private int completedCount=0;
     
-    ReadyQue processQue;
-    int timer=0;
-    ReadyQue readyQue=new ReadyQue();
-    ABC ab=new ABC();
-    Priority(ReadyQue pq)
-    {
-        processQue=pq;
-        Collections.sort(processQue,new SortByArrivalTime());
-        ab.start();
+    public Priority(ReadyQue pq) {
+        super(pq);
     }
-    
+
     public void run()
-    {         
-        int count=0;
-        for(;count<processQue.size();)
+    {
+        timer=0;
+        while(completedCount<processQue.size())
         {
+            addProcess();      
             if(!readyQue.isEmpty())
             {
                 Process p=readyQue.get(0);
-                //readyQue.remove(0);
-                p.start.add(timer);
-                p.remainingTime--;
-                p.servedTime++;
-                timer++;
+                p.execute(timer);
+                incTimer();
                 if(p.remainingTime==0)
                 {
                     p.complete(timer);
-                    count++;
-                    readyQue.remove(p);  
-                }
-                p.end.add(timer);
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) {System.out.println(ex); }
-                   
-                //count++;
-            }
-            else {
-                timer++;
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) { System.out.println(ex); }         
-            }
-        }ab.interrupt();      
-    }  
-    
-    class ABC extends Thread{
-        
-        public void run()
-        {
-            int pointer=0;
-            for(;pointer<processQue.size();)
-            //for(Process p: processQue)
-            {     
-                Process p=processQue.get(pointer);
-                if(timer>=p.arrivalTime)
-                {
-                    readyQue.addByPriority(p);
-                    pointer++;
-                }
-                else {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex) {}                        
-                }
-            }
+                    readyQue.remove(p);
+                    completedCount++;
+                }                     
+            }         
+            else incTimer();           
         }
     }
     
-        
-}
-
-class SRTF extends Thread implements Algos{
-    
-    ReadyQue processQue;
-    int timer=0;
-    ReadyQue readyQue=new ReadyQue();
-    ABC ab=new ABC();
-    SRTF(ReadyQue pq)
-    {
-        processQue=pq;
-        Collections.sort(processQue,new SortByArrivalTime());
-        ab.start();
+    @Override
+    void addProcess() {
+       while(pointer<processQue.size())
+        {
+            Process p=processQue.get(pointer);
+            if(timer>=p.arrivalTime)
+            {
+                readyQue.addByPriority(processQue.get(pointer));
+                pointer++;
+            }
+            else return;
+        }
     }
     
+}
+
+class SRTF extends Algos {
+
+    public SRTF(ReadyQue pq) {
+        super(pq);
+    }
+    
+    @Override
     public void run()
-    {         
-        int count=0;
-        for(;count<processQue.size();)
+    {
+        timer=0;
+        while(completedCount<processQue.size())
         {
+            addProcess();      
             if(!readyQue.isEmpty())
             {
                 Process p=readyQue.get(0);
-                //readyQue.remove(0); 
-                p.start.add(timer);
-                p.remainingTime--;
-                p.servedTime++;
-                timer++;
+                p.execute(timer);
+                incTimer();
                 if(p.remainingTime==0)
                 {
                     p.complete(timer);
-                    count++;
-                    readyQue.remove(p);  
-                }
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) {System.out.println(ex); }
-                p.end.add(timer);
-                //count++;
-            }
-            else {
-                timer++;
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) { System.out.println(ex); }         
-            }
-        }ab.interrupt();      
-    }  
+                    readyQue.remove(p);
+                    completedCount++;
+                }                     
+            }         
+            else incTimer();           
+        }
+    }
     
-    class ABC extends Thread{
-        
-        public void run()
+    @Override
+    void addProcess() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        while(pointer<processQue.size())
         {
-            int pointer=0;
-            for(;pointer<processQue.size();)
-            //for(Process p: processQue)
-            {     
-                Process p=processQue.get(pointer);
-                if(timer>=p.arrivalTime)
-                {
-                    readyQue.addByRemainingTime(p);
-                    pointer++;
-                }
-                else {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex) {}                        
-                }
+            Process p=processQue.get(pointer);
+            if(timer>=p.arrivalTime)
+            {
+                readyQue.addByRemainingTime(processQue.get(pointer));
+                pointer++;
             }
+            else return;
         }
     }
     
 }
 
+class RR extends Algos{
 
-class RR extends Thread implements Algos{
-    ReadyQue processQue;
-    int timer=0;
-    ReadyQue readyQue=new ReadyQue();
-    ABC ab=new ABC();
-    RR(ReadyQue pq)
-    {
-        processQue=pq;
-        Collections.sort(processQue,new SortByArrivalTime());
-        ab.start();
-    }
+    private int timerServed=0;
+    private int cur=0;
     
+    public RR(ReadyQue pq) {
+        super(pq);
+    }
+
+    @Override
     public void run()
     {
-        int count=0;
-        for(;count<processQue.size();)
+        timer=0;
+        while(completedCount<processQue.size())
         {
+            addProcess();          
             if(!readyQue.isEmpty())
             {
-                //Process p=readyQue.get(0);
-                for(int pointer=0;pointer<readyQue.size();pointer++){
-                //readyQue.remove(0);   
-                Process p=readyQue.get(pointer);
-                int timeSlice=0;
-                p.start.add(timer);
-                while(timeSlice<timeQuantam && p.isCompleted==false){
-                p.remainingTime--;
-                p.servedTime++;
-                timer++;
-                if(p.remainingTime==0)
+                if(cur>=readyQue.size())               
+                    cur=0;               
+                Process p=readyQue.get(cur++);
+                timerServed=0;
+                while(timerServed<timeQuantam && !p.isCompleted)
                 {
-                    p.complete(timer);
-                    count++;
-                    readyQue.remove(p);  
+                    p.execute(timer);
+                    incTimer();
+                    if(p.remainingTime==0)
+                    {
+                        p.complete(timer);
+                        readyQue.remove(p);
+                        completedCount++;
+                    }
+                    timerServed++;
                 }
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) {System.out.println(ex); }
-                timeSlice++;
-                } 
-                p.end.add(timer);
-                } 
-                //count++;
-            }
-            else {
-                timer++;
-                try {
-                    Thread.sleep(scale);
-                } catch (InterruptedException ex) { System.out.println(ex); }         
-            }
-                   
-        } 
-           ab.interrupt();
-    }
-    
-    
-    class ABC extends Thread{
-        
-        public void run()
-        {
-            int pointer=0;
-            for(;pointer<processQue.size();)
-            //for(Process p: processQue)
-            {     
-                Process p=processQue.get(pointer);
-                if(timer>=p.arrivalTime)
-                {
-                    readyQue.add(p);
-                    pointer++;
-                }
-                else {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException ex) {}                        
-                }
-            }
+            }         
+            else incTimer();          
         }
     }
     
-    
-   
+    @Override
+    void addProcess() {
+        while(pointer<processQue.size())
+        {
+            Process p=processQue.get(pointer);
+            if(timer>=p.arrivalTime)
+            {
+                readyQue.add(processQue.get(pointer));
+                pointer++;
+            }
+            else return;
+        }
+    }
     
 }
+

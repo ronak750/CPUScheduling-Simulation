@@ -22,12 +22,14 @@ public class Process {
     int remainingTime;
     int servedTime;
     boolean isCompleted=false;
-
+    ArrayList<Integer> start =new ArrayList<Integer>();
+    ArrayList<Integer> end =new ArrayList<Integer>();
     //ArrayList<Segment> seg= new ArrayList<Segment>();
 
     void complete(int time)
     {
         completionTime=time;
+        remainingTime=0;
         tat=completionTime-arrivalTime;
         wt=tat-cpuBrust;
         isCompleted=true;
@@ -58,12 +60,17 @@ public class Process {
         remainingTime=cpuBrust;
     }
 
+    void execute(int timer)
+    {
+        remainingTime--;
+        servedTime++;
+        start.add(timer);
+        end.add(timer+1);
+    }
+    
     void reset()
     {
         remainingTime=cpuBrust;
         isCompleted=false;
     }
-    ArrayList<Integer> start =new ArrayList<Integer>();
-    ArrayList<Integer> end =new ArrayList<Integer>();
-
 }
