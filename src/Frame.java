@@ -12,6 +12,12 @@ public class Frame extends javax.swing.JFrame {
     ReadyQue al;
     int processCount=6;
     int max_time=800;
+    private int xaxis=100,yaxis=600;
+    // one time unit is equal to 40pts on x_axis
+    // one process unit is 50pts on y_axis
+    private int xscale=40,yscale=50;
+    
+    
     public Frame(ReadyQue rq) {
         initComponents();
         al=rq;
@@ -67,38 +73,39 @@ public class Frame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(685, Short.MAX_VALUE)
+                .addContainerGap(604, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(22, 22, 22))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
     Color array[]= {Color.MAGENTA,Color.blue,Color.YELLOW,Color.DARK_GRAY,Color.cyan};
     @Override
     public void paint(Graphics g)
     {
         super.paint(g);
-        g.drawLine(100, 100, 100, 700);
-        g.drawLine(100, 700,1000,700);
+        g.drawLine(xaxis, 100, xaxis, yaxis);
+        g.drawLine(xaxis, yaxis,1000,yaxis);
         for(int i =0;i<al.size();i++)
         {
           Process p = al.get(i);
           g.setColor(Color.BLACK);
-          g.drawString("process"+(i+1), 20, (710-(50*(i+1))));
+          g.drawString("process"+(i+1), 20, (yaxis+10-(yscale*(i+1))));
           for(int j=0;j<p.start.size();j++)
           {
               
-              g.setColor(array[i%5]);
-              g.fillRect((100+(p.start.get(j)*40)), (700-(50*(i+1))), ((100+(p.end.get(j)*40))-(100+(p.start.get(j)*40))), 20);
+            g.setColor(array[i%array.length]);
+            g.fillRect((xaxis+(p.start.get(j)*xscale)), (yaxis-(yscale*(i+1))), (p.end.get(j)-p.start.get(j))*xscale, 20);
           }
             
         }
         int pixel=100;
         g.setColor(Color.BLACK);
-        for(int i=0;i<21;i++)
+        for(int i=0;i<23;i++)
         {
-            g.drawString(""+i, pixel+(i*40), 715);
+            g.drawString(""+i, pixel+(i*xscale), yaxis+15);
         }
     }
     public static void main(String args[]) {

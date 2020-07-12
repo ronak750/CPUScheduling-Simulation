@@ -160,7 +160,6 @@ public class Simulation extends javax.swing.JFrame{
         jButton1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(204, 0, 0));
         jButton1.setText("Simulate");
-        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -261,7 +260,7 @@ public class Simulation extends javax.swing.JFrame{
         jTextArea1.setColumns(20);
         jTextArea1.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jTextArea1.setRows(3);
-        jTextArea1.setText("Note: Add Maximum 10 processes.\n  Maximum Run Time 20 sec\n ( Scale 1 sec represent 2 sec here)");
+        jTextArea1.setText("Note: Add Maximum 10 processes.\n  Maximum Run Time 22 sec\n ( Scale 1 sec represent 2 sec here)");
         jTextArea1.setAutoscrolls(false);
         jScrollPane2.setViewportView(jTextArea1);
 
@@ -489,6 +488,7 @@ public class Simulation extends javax.swing.JFrame{
             case 5: RR roundRobin=new RR(processQue); 
                     t=roundRobin;
                     break;
+            default: JOptionPane.showMessageDialog(null,"Please Select an Algorithm"); return;
         } 
 //        t.start();
         final Thread ft=t;
@@ -519,7 +519,6 @@ public class Simulation extends javax.swing.JFrame{
         
 //        if(!schdl.isAlive())
 //            pgr.interrupt();
-jButton1.setEnabled(false);
 
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -553,10 +552,10 @@ jButton1.setEnabled(false);
 
     private void algoListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_algoListItemStateChanged
      
-        int index=algoList.getSelectedIndex();
-        if(index==0)
-            jButton1.setEnabled(false);
-        else jButton1.setEnabled(true);
+//        int index=algoList.getSelectedIndex();
+//        if(index==0)
+//            jButton1.setEnabled(false);
+//        else jButton1.setEnabled(true);
         
 // TODO add your handling code here:
     }//GEN-LAST:event_algoListItemStateChanged
