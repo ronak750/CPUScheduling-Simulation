@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.jfree.ui.RefineryUtilities;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -531,7 +530,7 @@ public class Simulation extends javax.swing.JFrame{
 
     void inference()
     {
-        int avgWt=0,avgTat=0;
+        double avgWt=0,avgTat=0;
         if(model.getRowCount()==processQue.size())
         {
             for(Process p: processQue)
@@ -540,7 +539,7 @@ public class Simulation extends javax.swing.JFrame{
                 avgTat+=p.tat;
             }
              model.addRow(new Object [] {"","","","","","",""});
-            model.addRow(new Object [] {"Average","","","","",avgTat/processQue.size(),avgWt/processQue.size()});
+            model.addRow(new Object [] {"Average","","","","",String.format("%.2f", (avgTat/processQue.size())),String.format("%.2f", (avgWt/processQue.size()))});
         }       
     }
     
@@ -551,8 +550,12 @@ public class Simulation extends javax.swing.JFrame{
             JOptionPane.showMessageDialog(null, "Please add only 10 processes");
             return;
         }
+        if(model.getRowCount()>backup.size())
+        {
+            model.removeRow(model.getRowCount()-1);
+            model.removeRow(model.getRowCount()-1);
+        }
         Process p=new Process();
-//        int pid=Integer.parseInt()
             noOfProcesses++;
          int at=Integer.parseInt(arrivalTime.getText());
          int cpu=Integer.parseInt(cpuBrust.getText());
