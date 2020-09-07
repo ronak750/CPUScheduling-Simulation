@@ -50,7 +50,7 @@ class FCFS extends Algos
     {
         super(pq);   
     }
-    public void run()
+    synchronized public void run()
     {
         timer=0;
         while(completedCount<processQue.size())

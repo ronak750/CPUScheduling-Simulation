@@ -462,6 +462,11 @@ public class Simulation extends javax.swing.JFrame{
         
         copy();
         exit=true;
+        if(model.getRowCount()>processQue.size())
+        {
+            model.removeRow(model.getRowCount()-1);
+            model.removeRow(model.getRowCount()-1);
+        }
         try {
             Thread.sleep(400);
         } catch (InterruptedException ex) {
@@ -499,6 +504,7 @@ public class Simulation extends javax.swing.JFrame{
                try{
                    ft.join();
                    jButton3.doClick();
+                   inference();
                }catch(Exception e){System.out.println(e);}
            } 
         });
@@ -523,7 +529,20 @@ public class Simulation extends javax.swing.JFrame{
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    
+    void inference()
+    {
+        int avgWt=0,avgTat=0;
+        if(model.getRowCount()==processQue.size())
+        {
+            for(Process p: processQue)
+            {
+                avgWt+=p.wt;
+                avgTat+=p.tat;
+            }
+             model.addRow(new Object [] {"","","","","","",""});
+            model.addRow(new Object [] {"Average","","","","",avgTat/processQue.size(),avgWt/processQue.size()});
+        }       
+    }
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     
@@ -725,9 +744,9 @@ try{
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
-    
+  
 class Progress extends Thread{
-    public void run()
+    synchronized public void run()
     {
         while(true)
         {
@@ -746,7 +765,7 @@ class Progress extends Thread{
                     }
             }
             }catch(Exception e){
-                //System.out.println(e);
+                System.out.println(e);
             }
             if(exit)
                 break;
