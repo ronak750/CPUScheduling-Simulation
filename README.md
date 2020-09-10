@@ -1,6 +1,6 @@
 # Graphical CPU Scheduling-Simulator
-It is a GUI based simulator where an user can input the the processes and then can simulate them and thus visualise using various scheduling techniques.
-Further the gantt chart pictorially depicts the simulation process.
+It is a GUI based simulator where an user can input the the processes and then can simulate them and thus visualise various scheduling techniques.
+This graphical simulator is helpful in analysing the scheduling techniques. Further the gantt chart pictorially depicts the simulation process.
 
 ### This project features CPU Scheduling:
 * First Come First Serve (FCFS)

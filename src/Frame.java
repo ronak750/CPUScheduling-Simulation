@@ -22,6 +22,7 @@ public class Frame extends javax.swing.JFrame {
         initComponents();
         al=rq;
         Collections.sort(al,new SortById());
+        setTitle("Gantt Chart");
 //        al= new ArrayList<Process>(); 
 //      	Process p1=new Process();
 //       p1.start.add(0);
@@ -55,25 +56,37 @@ public class Frame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("                time");
 
+        jLabel2.setFont(new java.awt.Font("Adobe Caslon Pro", 3, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(102, 0, 255));
+        jLabel2.setText("Visual Timeline Representation");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(373, 373, 373)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(474, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(373, 373, 373)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(265, 265, 265)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 453, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(352, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(604, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 532, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
@@ -88,6 +101,7 @@ public class Frame extends javax.swing.JFrame {
         super.paint(g);
         g.drawLine(xaxis, 100, xaxis, yaxis);
         g.drawLine(xaxis, yaxis,1000,yaxis);
+        
         for(int i =0;i<al.size();i++)
         {
           Process p = al.get(i);
@@ -107,6 +121,9 @@ public class Frame extends javax.swing.JFrame {
         {
             g.drawString(""+i, pixel+(i*xscale), yaxis+15);
         }
+//        g.setColor(Color.decode(""));
+//        g.setFont(new Font("Arial", 0, 24));
+//        g.drawString("Visual Timeline Representation ", 200, 70);
     }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -143,5 +160,6 @@ public class Frame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
