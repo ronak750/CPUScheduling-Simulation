@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 abstract class Algos extends Thread{
      
-   private int scale=400;
+   private int scale=550;
    protected int timeQuantam=3;
    protected int timer=0;
    protected int pointer=0;

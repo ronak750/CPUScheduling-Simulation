@@ -28,10 +28,9 @@ public class Simulation extends javax.swing.JFrame{
     int noOfProcesses=0;
     Map<Integer, javax.swing.JProgressBar> mp=new HashMap<Integer, javax.swing.JProgressBar>();
     DefaultTableModel model;
-            
+    
     public Simulation() {
         initComponents();
-        
         processQue=new ReadyQue();
         backup=new ArrayList<Process>();
         
@@ -150,11 +149,6 @@ public class Simulation extends javax.swing.JFrame{
         algoList.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         algoList.setForeground(new java.awt.Color(204, 0, 0));
         algoList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Scheduling Type", "FCFS", "SJF", "SRTF", "Priority", "Round Robin" }));
-        algoList.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                algoListItemStateChanged(evt);
-            }
-        });
 
         jButton1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(204, 0, 0));
@@ -174,7 +168,6 @@ public class Simulation extends javax.swing.JFrame{
             }
         });
 
-        table.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         table.setForeground(new java.awt.Color(102, 102, 255));
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -292,7 +285,7 @@ public class Simulation extends javax.swing.JFrame{
                                         .addGap(10, 10, 10)
                                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)))))
+                                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(26, 26, 26)
@@ -559,6 +552,11 @@ public class Simulation extends javax.swing.JFrame{
             noOfProcesses++;
          int at=Integer.parseInt(arrivalTime.getText());
          int cpu=Integer.parseInt(cpuBrust.getText());
+         if(cpu==0)
+         {
+             JOptionPane.showMessageDialog(this,"Invalid cpu brust. Please Renenter");
+             return;
+         }
          int prt=5;
          if(jCheckBox1.isSelected())
             prt=Integer.parseInt(priority.getText());
@@ -571,16 +569,6 @@ public class Simulation extends javax.swing.JFrame{
         
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void algoListItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_algoListItemStateChanged
-     
-//        int index=algoList.getSelectedIndex();
-//        if(index==0)
-//            jButton1.setEnabled(false);
-//        else jButton1.setEnabled(true);
-        
-// TODO add your handling code here:
-    }//GEN-LAST:event_algoListItemStateChanged
 
     private void arrivalTimeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_arrivalTimeKeyPressed
 
@@ -750,7 +738,7 @@ try{
   
 class Progress extends Thread{
     synchronized public void run()
-    {
+    { 
         while(true)
         {
             try{
@@ -773,7 +761,7 @@ class Progress extends Thread{
             if(exit)
                 break;
         }
-        
+//       
     }
 }
 
